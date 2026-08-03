@@ -1,2 +1,3 @@
 .venv/
 db.sqlite3
+InformationRetrieval/bm25_object_location/
