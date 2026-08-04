@@ -10,7 +10,7 @@
     <div style="text-align: center; margin-bottom: 40px; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px;">
         <h3>Kendi Sorgunu Yaz</h3>
         <!-- Form data will be sent via GET method -->
-        <form action="{% url 'search_engine:home' %}" method="GET" style="margin-top: 15px;">
+        <form action="{% url 'search_engine:results' %}" method="GET" style="margin-top: 15px;">
             {{ form.q }}
             <button type="submit" class="btn" style="margin-left: 10px;">Ara</button>
         </form>

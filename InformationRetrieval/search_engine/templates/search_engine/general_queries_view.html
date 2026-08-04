@@ -10,7 +10,7 @@
     <ul style="list-style-type: none; padding: 0;">
         {% for query in queries %}
             <li style="margin-bottom: 10px;">
-                <a href="{% url 'search_engine:home' %}?q_id={{ query.query_id }}" 
+                <a href="{% url 'search_engine:results' %}?q_id={{ query.query_id }}" 
                    style="display: block; padding: 15px; background: #fff; border: 1px solid #ced4da; border-radius: 6px; text-decoration: none; color: #212529; transition: background 0.2s;">
                     <strong>ID: {{ query.query_id }}</strong><br>
                     <span style="color: #6c757d; margin-top: 5px; display: inline-block;">{{ query.text }}</span>

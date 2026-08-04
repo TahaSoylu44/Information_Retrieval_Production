@@ -5,6 +5,10 @@ from nltk.corpus import stopwords
 from django.conf import settings
 import os
 import pickle
+import chromadb
+from collections import defaultdict
+import ir_datasets
+from sentence_transformers import CrossEncoder
 
 class SearchEngineConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -13,8 +17,13 @@ class SearchEngineConfig(AppConfig):
     stop_words = None
     lematizer = None
     bm25 = None
+    collection = None
+    doc_dict = None
+    dataset = None
+    cross_encoder_model = None
 
     def ready(self):
+        dataset = ir_datasets.load("wikir/en1k/training")
         nltk.download("punkt_tab", quiet=True)
         nltk.download("wordnet", quiet=True)
         nltk.download('stopwords', quiet=True)
@@ -26,6 +35,9 @@ class SearchEngineConfig(AppConfig):
 
         #! BM25
         model_path = os.path.join(settings.BASE_DIR, 'bm25_object_location', 'bm25_obj.pkl')
+        db_path = os.path.join(settings.BASE_DIR, 'chroma_db_storage')
+        chroma_client = chromadb.PersistentClient(path=db_path)
+        SearchEngineConfig.collection = chroma_client.get_collection(name="django_embedding_collection")
 
         if os.path.exists(model_path):
             with open(model_path, 'rb') as f:
@@ -36,3 +48,17 @@ class SearchEngineConfig(AppConfig):
         else:
             print("bm25 cannot be found!")
             print(settings.BASE_DIR)
+
+        #! DOC_DICT
+        doc_dict_trial = defaultdict(str)
+
+        for i, doc in enumerate(dataset.docs_iter()):
+            doc_dict_trial[i] = doc.doc_id
+
+        SearchEngineConfig.doc_dict = dict(doc_dict_trial)
+
+        print("Doc dict ready!")
+
+        #! CROSS ENCODER
+        SearchEngineConfig.cross_encoder_model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L6-v2')
+        print("Cross Encoder Ready!")

@@ -1,0 +1,94 @@
+{% extends "search_engine/base.html" %}
+
+{% block title %}Arama Sonuçları - IR Sistemi{% endblock %}
+
+{% block content %}
+    <!-- Üst Kısım: Geri Dönüş ve Arama Özeti -->
+    <div style="margin-bottom: 30px;">
+        <a href="{% url 'search_engine:home' %}" class="btn" style="background-color: #6c757d; margin-bottom: 20px;">&laquo; Yeni Arama Yap</a>
+        
+        <h2>Arama Sonuçları</h2>
+        
+        <!-- Aranan Query'nin Gösterildiği Kutu -->
+        <div style="padding: 20px; background: #e9ecef; border-left: 5px solid #0d6efd; border-radius: 6px;">
+            <p style="margin: 0; font-size: 18px;">
+                <strong>Sorgu:</strong> <span style="color: #212529;">{{ searched_text }}</span>
+            </p>
+            <p style="margin: 8px 0 0 0; font-size: 14px; color: #6c757d;">
+                {% if is_ready_query %}
+                    Bu, sistemde kayıtlı hazır bir test sorgusudur.
+                {% else %}
+                    Bu, kullanıcının girdiği özel bir sorgudur.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- BÖLÜM 1: Modelimizin Tahmin Ettiği Sonuçlar -->
+    <h3>Model Sonuçları (Cross-Encoder)</h3>
+    <p style="color: #6c757d;">Arama motorunun bu sorgu için en uygun bulduğu ve sıraladığı dokümanlar:</p>
+
+    {% if results %}
+        <ul style="list-style-type: none; padding: 0;">
+            {% for doc in results %}
+                <li style="margin-bottom: 15px;">
+                    <!-- Doküman Kartı: Tıklandığında DetailView'a gider -->
+                    <a href="{% url 'search_engine:document_detail' doc.pk %}" 
+                       style="display: block; padding: 20px; background: #fff; border: 1px solid #ced4da; border-radius: 8px; text-decoration: none; color: #212529; transition: box-shadow 0.2s, border-color 0.2s;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+                            <strong style="font-size: 18px; color: #0d6efd;">Doküman ID: {{ doc.doc_id }}</strong>
+                            <span style="font-size: 14px; font-weight: bold; color: #fff; background: #6c757d; padding: 3px 10px; border-radius: 12px;">
+                                Sıra: {{ forloop.counter }}
+                            </span>
+                        </div>
+                        
+                        <!-- Metnin sadece bir kısmını (200 karakter) gösteriyoruz -->
+                        <span style="color: #495057; line-height: 1.5; display: inline-block;">
+                            {{ doc.text|truncatechars:200 }}
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div style="padding: 15px; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 6px;">
+            Bu sorguyla eşleşen herhangi bir doküman bulunamadı.
+        </div>
+    {% endif %}
+
+    <!-- BÖLÜM 2: Ground-Truth (Eğer hazır bir sorgu seçildiyse görünür) -->
+    {% if is_ready_query %}
+        <hr style="margin: 40px 0; border: 0; border-top: 2px dashed #dee2e6;">
+        
+        <h3>Veri Seti Eşleşmeleri (Ground-Truth)</h3>
+        <p style="color: #6c757d;">Wikir veri setine göre bu sorgunun **gerçekten** ilgili (relevant) olduğu dokümanlar:</p>
+        
+        {% if actual_documents %}
+            <ul style="list-style-type: none; padding: 0;">
+                <!-- actual_documents içerisinde ScoreDoc objeleri olduğu için document objesine score_doc.document şeklinde erişiyoruz -->
+                {% for score_doc in actual_documents %}
+                    <li style="margin-bottom: 10px;">
+                        <a href="{% url 'search_engine:document_detail' score_doc.document.pk %}" 
+                           style="display: block; padding: 15px; background: #f8f9fa; border: 1px solid #c3e6cb; border-left: 5px solid #28a745; border-radius: 6px; text-decoration: none; color: #212529;">
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px;">
+                                <strong>Doküman ID: {{ score_doc.document.doc_id }}</strong> 
+                                <span style="color: #198754; font-weight: bold;">Skor: {{ score_doc.score }}</span>
+                            </div>
+                            
+                            <span style="color: #6c757d; font-size: 14px;">
+                                {{ score_doc.document.text|truncatechars:150 }}
+                            </span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="padding: 15px; background: #e2e3e5; color: #383d41; border-radius: 6px;">
+                Veri setinde bu sorguya kesin olarak atanmış bir doküman (relevance) bulunmuyor.
+            </p>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

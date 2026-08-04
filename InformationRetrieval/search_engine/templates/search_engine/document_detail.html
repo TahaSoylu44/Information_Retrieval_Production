@@ -24,10 +24,21 @@
         <ul style="list-style-type: none; padding: 0;">
             <!-- document objesinden ScoreDoc tablosuna ters bağlantı yapıyoruz -->
             {% for score_doc in document.score_doc.all %}
-                <li style="padding: 10px; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 8px; background-color: #fcfcfc;">
-                    <strong>Sorgu ID:</strong> {{ score_doc.query.query_id }} <br>
-                    <strong>Skor/İlgililik (Relevance):</strong> <span style="color: green; font-weight: bold;">{{ score_doc.score }}</span> <br>
-                    <strong>Sorgu Metni:</strong> {{ score_doc.query.text }}
+                <li style="margin-bottom: 10px;">
+                    <a href="{% url 'search_engine:results' %}?q_id={{ score_doc.query.query_id }}" 
+                       style="display: block; padding: 15px; border: 1px solid #dee2e6; border-radius: 6px; background-color: #fcfcfc; text-decoration: none; color: #212529; transition: background-color 0.2s, box-shadow 0.2s;"
+                       onmouseover="this.style.backgroundColor='#e9ecef'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';"
+                       onmouseout="this.style.backgroundColor='#fcfcfc'; this.style.boxShadow='none';">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px;">
+                            <strong>Sorgu ID: {{ score_doc.query.query_id }}</strong>
+                            <span style="color: #198754; font-weight: bold;">Skor/İlgililik (Relevance): {{ score_doc.score }}</span>
+                        </div>
+                        
+                        <div style="color: #495057;">
+                            <strong>Sorgu Metni:</strong> {{ score_doc.query.text }}
+                        </div>
+                    </a>
                 </li>
             {% empty %}
                 <li style="padding: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 4px;">
