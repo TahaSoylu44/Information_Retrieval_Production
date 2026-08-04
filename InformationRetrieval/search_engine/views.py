@@ -5,6 +5,7 @@ from search_engine.forms import CustomQueryForm
 from django.contrib import messages
 from django.apps import apps
 from search_engine.preprocessings.token_and_lemmatize import cross_encoding
+from django.db.models import Q
 
 class Home(FormView):
     template_name = "search_engine/home.html"
@@ -17,12 +18,36 @@ class QueriesView(ListView):
 
     paginate_by = 50
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_term = self.request.GET.get('q_search')
+
+        if search_term:
+            queryset = queryset.filter(
+                Q(query_id__icontains=search_term) |
+                Q(text__icontains=search_term)
+            )
+
+        return queryset
+
 class DocumentsView(ListView):
     model = Document
     template_name = "search_engine/general_documents_view.html"
     context_object_name = "documents"
 
     paginate_by = 50
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_term = self.request.GET.get('d_search')
+
+        if search_term:
+            queryset = queryset.filter(
+                Q(doc_id__icontains=search_term) |
+                Q(text__icontains=search_term)
+            )
+
+        return queryset
 
 class DocumentDetailView(DetailView):
     model = Document

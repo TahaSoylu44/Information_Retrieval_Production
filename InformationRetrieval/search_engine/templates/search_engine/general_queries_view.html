@@ -6,15 +6,36 @@
     <h2>Hazır Sorgular (Wikir Dataset)</h2>
     <p>Sonuçları getirmek (retrieval) için test etmek istediğiniz sorgunun üzerine tıklayın.</p>
 
+    <!-- Arama (Filtreleme) Kutusu -->
+    <div style="margin-bottom: 20px; background-color: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #dee2e6;">
+        <form method="GET" action="" style="display: flex; gap: 10px;">
+            <input type="text" name="q_search" value="{{ request.GET.q_search }}" placeholder="Sorgu ID veya kelime ara..." 
+                   style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;">
+            <button type="submit" class="btn" style="background-color: #0d6efd; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                Filtrele
+            </button>
+            
+            {% if request.GET.q_search %}
+                <a href="{% url 'search_engine:query_list' %}" class="btn" style="background-color: #6c757d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Temizle</a>
+            {% endif %}
+        </form>
+    </div>
+
     <!-- Sorgu Listesi -->
     <ul style="list-style-type: none; padding: 0;">
         {% for query in queries %}
             <li style="margin-bottom: 10px;">
                 <a href="{% url 'search_engine:results' %}?q_id={{ query.query_id }}" 
-                   style="display: block; padding: 15px; background: #fff; border: 1px solid #ced4da; border-radius: 6px; text-decoration: none; color: #212529; transition: background 0.2s;">
+                   style="display: block; padding: 15px; background: #fff; border: 1px solid #ced4da; border-radius: 6px; text-decoration: none; color: #212529; transition: background 0.2s;"
+                   onmouseover="this.style.backgroundColor='#e9ecef';"
+                   onmouseout="this.style.backgroundColor='#fff';">
                     <strong>ID: {{ query.query_id }}</strong><br>
                     <span style="color: #6c757d; margin-top: 5px; display: inline-block;">{{ query.text }}</span>
                 </a>
+            </li>
+        {% empty %}
+            <li style="padding: 15px; color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 6px;">
+                Aramanızla eşleşen bir sorgu bulunamadı.
             </li>
         {% endfor %}
     </ul>
@@ -22,8 +43,9 @@
     <!-- Sayfalama (Pagination) Kontrolleri -->
     <div style="margin-top: 30px; text-align: center; font-size: 16px;">
         {% if page_obj.has_previous %}
-            <a href="?page=1" class="btn" style="padding: 5px 10px;">&laquo; İlk</a>
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn" style="padding: 5px 10px;">Önceki</a>
+            <!-- Arama parametresi varsa sayfa değiştirirken kaybolmaması için request.GET.q_search eklenir -->
+            <a href="?page=1{% if request.GET.q_search %}&q_search={{ request.GET.q_search }}{% endif %}" class="btn" style="padding: 5px 10px;">&laquo; İlk</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q_search %}&q_search={{ request.GET.q_search }}{% endif %}" class="btn" style="padding: 5px 10px;">Önceki</a>
         {% endif %}
 
         <span style="font-weight: bold; margin: 0 15px;">
@@ -31,8 +53,8 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn" style="padding: 5px 10px;">Sonraki</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn" style="padding: 5px 10px;">Son &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q_search %}&q_search={{ request.GET.q_search }}{% endif %}" class="btn" style="padding: 5px 10px;">Sonraki</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q_search %}&q_search={{ request.GET.q_search }}{% endif %}" class="btn" style="padding: 5px 10px;">Son &raquo;</a>
         {% endif %}
     </div>
 {% endblock %}
