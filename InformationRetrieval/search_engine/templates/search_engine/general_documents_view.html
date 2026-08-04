@@ -1,0 +1,42 @@
+{% extends "search_engine/base.html" %}
+
+{% block title %}Doküman Listesi - IR Sistemi{% endblock %}
+
+{% block content %}
+    <h2>Sistemdeki Dokümanlar</h2>
+    <p>Detaylarını ve eşleşen sorgularını görmek için bir dokümana tıklayın.</p>
+
+    <!-- Doküman Listesi -->
+    <ul style="list-style-type: none; padding: 0;">
+        {% for doc in documents %}
+            <li style="margin-bottom: 10px;">
+                <!-- URL'deki 'document_detail' kısmını kendi urls.py dosmana göre güncelle -->
+                <a href="{% url 'search_engine:document_detail' doc.pk %}" 
+                   style="display: block; padding: 15px; background: #fff; border: 1px solid #ced4da; border-radius: 6px; text-decoration: none; color: #212529; transition: background 0.2s;">
+                    <strong>Doküman ID: {{ doc.doc_id }}</strong><br>
+                    <span style="color: #6c757d; margin-top: 5px; display: inline-block;">
+                        <!-- İçeriğin tamamı yerine ilk 100 karakteri gösteriyoruz ki sayfa şişmesin -->
+                        {{ doc.text|truncatechars:100 }}
+                    </span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Sayfalama (Pagination) -->
+    <div style="margin-top: 30px; text-align: center; font-size: 16px;">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn" style="padding: 5px 10px;">&laquo; İlk</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn" style="padding: 5px 10px;">Önceki</a>
+        {% endif %}
+
+        <span style="font-weight: bold; margin: 0 15px;">
+            Sayfa {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn" style="padding: 5px 10px;">Sonraki</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn" style="padding: 5px 10px;">Son &raquo;</a>
+        {% endif %}
+    </div>
+{% endblock %}

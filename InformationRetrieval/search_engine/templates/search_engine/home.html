@@ -1,0 +1,25 @@
+<!-- Inherit from base.html -->
+{% extends "search_engine/base.html" %}
+
+{% block title %}Ana Sayfa - IR Sistemi{% endblock %}
+
+{% block content %}
+    <h2 style="text-align: center; margin-bottom: 30px;">Nasıl arama yapmak istersiniz?</h2>
+    
+    <!-- OPTION 1: Custom Query Form -->
+    <div style="text-align: center; margin-bottom: 40px; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px;">
+        <h3>Kendi Sorgunu Yaz</h3>
+        <!-- Form data will be sent via GET method -->
+        <form action="{% url 'search_engine:home' %}" method="GET" style="margin-top: 15px;">
+            {{ form.q }}
+            <button type="submit" class="btn" style="margin-left: 10px;">Ara</button>
+        </form>
+    </div>
+
+    <!-- OPTION 2: Pre-defined Query Link -->
+    <div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+        <h3>Sistemdeki Sorguları Kullan</h3>
+        <p>Wikir/en1k/training veri setindeki hazır test sorgularını görmek ve seçmek için listeye göz atın.</p>
+        <a href="{% url 'search_engine:query_list' %}" class="btn">Tüm Sorguları Listele</a>
+    </div>
+{% endblock %}

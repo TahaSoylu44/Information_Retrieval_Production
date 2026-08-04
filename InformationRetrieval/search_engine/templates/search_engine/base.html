@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Sayfaya özel başlık belirleyebilmek için title bloğu açıyoruz -->
+    <title>{% block title %}Arama Motoru{% endblock %}</title>
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; }
+        header { background-color: #212529; color: white; padding: 1rem; text-align: center; }
+        nav { margin-top: 10px; }
+        nav a { color: #f8f9fa; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; color: #0d6efd; }
+        main { padding: 2rem; max-width: 900px; margin: 30px auto; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; }
+        .btn { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #0d6efd; color: white; border: none; border-radius: 4px; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #0b5ed7; }
+    </style>
+</head>
+<body>
+
+    <!-- Sabit Gezinme Çubuğu (Navbar) -->
+    <header>
+        <h1>Information Retrieval Sistemi</h1>
+        <nav>
+            <a href="{% url 'search_engine:home' %}">Ana Sayfa</a>
+            <a href="{% url 'search_engine:query_list' %}">Hazır Sorgular</a>
+            <a href="{% url 'search_engine:document_list' %}">Documents</a>
+        </nav>
+    </header>
+
+    <!-- Değişen İçerik Alanı -->
+    <main>
+        {% block content %}
+        <!-- Diğer HTML sayfalarının içeriği tam olarak buraya gelecek -->
+        {% endblock %}
+    </main>
+
+</body>
+</html>
