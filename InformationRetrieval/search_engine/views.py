@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView, ListView, FormView, TemplateView
-from search_engine.models import Query, Document, ScoreDoc
+from search_engine.models import Query, Document
 from search_engine.forms import CustomQueryForm
 from django.contrib import messages
 from django.apps import apps
 from search_engine.preprocessings.token_and_lemmatize import cross_encoding
 from django.db.models import Q
+from search_engine.preprocessings.hit_highlighting import highlight
 
 class Home(FormView):
     template_name = "search_engine/home.html"
@@ -93,5 +94,8 @@ class ResultsView(TemplateView):
 
         if is_ready_query:
             context["actual_documents"] = query_obj.score_doc.all()
+
+        for doc in ordered_results:
+            doc.highlighted_texts = highlight(search_text, doc.text)    # not changing original text
 
         return context

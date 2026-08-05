@@ -43,9 +43,10 @@
                             </span>
                         </div>
                         
-                        <!-- Metnin sadece bir kısmını (200 karakter) gösteriyoruz -->
+                        <!-- DİKKAT: view dosyasındaki isimlendirmene göre (highleted_texts) çağırıyoruz. 
+                             HTML taglerinin çalışması için 'safe', keserken etiketleri bozmaması için 'truncatechars_html' eklendi -->
                         <span style="color: #495057; line-height: 1.5; display: inline-block;">
-                            {{ doc.text|truncatechars:200 }}
+                            {{ doc.highlighted_texts|safe|truncatechars_html:200 }}
                         </span>
                     </a>
                 </li>
@@ -77,6 +78,8 @@
                                 <span style="color: #198754; font-weight: bold;">Skor: {{ score_doc.score }}</span>
                             </div>
                             
+                            <!-- Ground-Truth kısmı veritabanındaki orijinal metni kullanmaya devam ediyor 
+                                 (Çünkü view'da sadece ordered_results'u for döngüsüne soktun) -->
                             <span style="color: #6c757d; font-size: 14px;">
                                 {{ score_doc.document.text|truncatechars:150 }}
                             </span>
