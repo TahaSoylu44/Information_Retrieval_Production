@@ -105,12 +105,12 @@ def cross_encoding(search_text: str) -> list:
         document_obj = Document.objects.filter(doc_id=doc_id).first()
         query_doc_pairs.append((search_text, document_obj.text))
 
-    cross_encoder_scores = list(cross_encoder_model.predict(query_doc_pairs))
+    cross_encoder_scores = list(cross_encoder_model.predict(query_doc_pairs)) 
 
     index_and_score = []
 
     for i in range(len(retrieval_list)):
-        index_and_score.append((cross_encoder_scores[i], i))
+        index_and_score.append((cross_encoder_scores[i], i))  
 
     result_of_reranking = []
 
